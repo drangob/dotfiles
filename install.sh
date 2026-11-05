@@ -3,6 +3,40 @@ set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Ensure Zsh is installed
+if ! command -v zsh >/dev/null 2>&1; then
+  echo "❌ Error: zsh is not installed. Please install zsh on this machine first."
+  exit 1
+fi
+
+# Bootstrap Oh-My-Zsh if not present
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "📦 Installing Oh-My-Zsh..."
+  RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
+fi
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+# Bootstrap Powerlevel10k theme
+if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
+  echo "🎨 Installing Powerlevel10k theme..."
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+fi
+
+# Bootstrap custom plugins
+clone_plugin() {
+  local repo="$1"
+  local name="$2"
+  if [ ! -d "$ZSH_CUSTOM/plugins/$name" ]; then
+    echo "🔌 Installing plugin: $name..."
+    git clone --depth=1 "$repo" "$ZSH_CUSTOM/plugins/$name"
+  fi
+}
+
+clone_plugin https://github.com/zsh-users/zsh-autosuggestions zsh-autosuggestions
+clone_plugin https://github.com/agkozak/zsh-z zsh-z
+clone_plugin https://github.com/z-shell/F-Sy-H.git F-Sy-H
+
 link_file() {
   local src="$1"
   local dst="$2"
