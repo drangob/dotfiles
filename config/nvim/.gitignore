@@ -1,0 +1,7 @@
+# editor/runtime junk
+*.swp
+*.swo
+*~
+
+# spell files generated locally
+spell/

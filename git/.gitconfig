@@ -1,0 +1,46 @@
+# This is Git's per-user configuration file.
+# Note: Personal identity ([user] name, email, signingkey) lives in ~/.gitconfig.local
+
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+	undo = reset --soft HEAD~1
+	yank = "!git fetch origin \"$(git rev-parse --abbrev-ref HEAD)\" && git stash && git reset --hard origin/\"$(git rev-parse --abbrev-ref HEAD)\""
+	blaame = blame -w -C -C -C
+
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
+
+[push]
+	autoSetupRemote = true
+
+[gpg]
+	format = ssh
+
+[rerere]
+	enabled = true
+
+[column]
+	ui = auto
+
+[branch]
+	sort = -committerdate
+
+[init]
+	defaultBranch = main
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+# Include local machine-specific overrides (identity, signing program, etc.)
+[include]
+	path = ~/.gitconfig.local

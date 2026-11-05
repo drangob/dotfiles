@@ -1,0 +1,8 @@
+.DS_Store
+*.zwc
+*.zwc.old
+*.bak
+*.bak-*
+.zsh_secrets
+.gitconfig.local
+zcompdump*
