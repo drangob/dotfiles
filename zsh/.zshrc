@@ -103,6 +103,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 source $ZSH/oh-my-zsh.sh
+
+# Mise version manager
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
 # autosuggestions' zpty-based async fetch silently fails under Ghostty; sync mode is fine for this history size
 unset ZSH_AUTOSUGGEST_USE_ASYNC
 
