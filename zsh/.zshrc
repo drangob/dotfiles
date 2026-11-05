@@ -153,7 +153,7 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 
 
-source $HOME/.config/op/plugins.sh
+[[ -f "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -36,6 +36,7 @@ clone_plugin() {
 clone_plugin https://github.com/zsh-users/zsh-autosuggestions zsh-autosuggestions
 clone_plugin https://github.com/agkozak/zsh-z zsh-z
 clone_plugin https://github.com/z-shell/F-Sy-H.git F-Sy-H
+clone_plugin https://github.com/TamCore/autoupdate-oh-my-zsh-plugins autoupdate
 
 link_file() {
   local src="$1"
