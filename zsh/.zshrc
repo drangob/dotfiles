@@ -156,7 +156,12 @@ fi
 [[ -f "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# FZF shell integrations (macOS / Linux)
+if [ -f ~/.fzf.zsh ]; then
+  source ~/.fzf.zsh
+elif [ -f /usr/share/fzf/shell/key-bindings.zsh ]; then
+  source /usr/share/fzf/shell/key-bindings.zsh
+fi
 
 # add VCPKG to the path
 export PATH=$PATH:/opt/vcpkg
