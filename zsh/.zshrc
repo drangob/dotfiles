@@ -203,16 +203,6 @@ fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
-#
-# claude code
-#alias claude='npx claude'
-#alias claude='~/.asdf/installs/nodejs/25.0.0/bin/claude'
-#
-codex() {
-  $HOME/.asdf/installs/nodejs/25.0.0/bin/node \
-    $HOME/.asdf/installs/nodejs/25.0.0/lib/node_modules/@openai/codex/bin/codex.js "$@"
-}
-
 export PATH="$HOME/.local/bin:$PATH"
 if command -v brew >/dev/null 2>&1; then
   pg_bin="$(brew --prefix postgresql@15 2>/dev/null)/bin"

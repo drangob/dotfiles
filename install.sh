@@ -86,6 +86,12 @@ fi
 [ -f "$DOTFILES_DIR/config/gh/config.yml" ] && link_file "$DOTFILES_DIR/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 [ -f "$DOTFILES_DIR/config/btop/btop.conf" ] && link_file "$DOTFILES_DIR/config/btop/btop.conf" "$HOME/.config/btop/btop.conf"
 
+# Bootstrap Codex CLI if not present
+if ! command -v codex >/dev/null 2>&1 && [ ! -f "$HOME/.local/bin/codex" ]; then
+  echo "🤖 Installing Codex CLI..."
+  sh -c 's=$(curl -fsSL https://chatgpt.com/codex/install.sh) && CODEX_NON_INTERACTIVE=1 eval "$s"' || true
+fi
+
 # Setup ~/.gitconfig.local interactively if missing
 if [ ! -f "$HOME/.gitconfig.local" ]; then
   echo ""
