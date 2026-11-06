@@ -1,1 +1,0 @@
-export PYTHON_CONFIGURE_OPTS="--with-openssl=$(brew --prefix openssl) --with-readline=$(brew --prefix readline) LDFLAGS=-L$(brew --prefix gettext)/lib CPPFLAGS=-I$(brew --prefix gettext)/include"

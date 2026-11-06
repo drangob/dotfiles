@@ -95,7 +95,6 @@ plugins=(
     zsh-autosuggestions
     zsh-z
     F-Sy-H
-    asdf
 )
 # Only load macos plugin on Darwin
 if [[ "$OSTYPE" == "darwin"* ]]; then

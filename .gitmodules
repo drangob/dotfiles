@@ -1,0 +1,4 @@
+[submodule "work"]
+	path = work
+	url = git@github.com:drangob/dotfiles-work.git
+	update = none

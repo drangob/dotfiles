@@ -77,8 +77,20 @@ if [ -d "$DOTFILES_DIR/config/nvim" ]; then
 fi
 
 # Tool versioning
-[ -f "$DOTFILES_DIR/asdf/.tool-versions" ] && link_file "$DOTFILES_DIR/asdf/.tool-versions" "$HOME/.tool-versions"
-[ -f "$DOTFILES_DIR/asdf/.asdfrc" ] && link_file "$DOTFILES_DIR/asdf/.asdfrc" "$HOME/.asdfrc"
+link_file "$DOTFILES_DIR/config/mise/config.toml" "$HOME/.config/mise/config.toml"
+command -v mise >/dev/null 2>&1 || echo "⚠ mise is not installed: brew install mise"
+
+# Work dotfiles (private submodule, opt-in per machine)
+if [ ! -f "$DOTFILES_DIR/work/zprofile" ]; then
+  read -rp "Pull the private work dotfiles (needs access to drangob/dotfiles-work)? [y/N] " pull_work
+  if [[ "$pull_work" =~ ^[Yy] ]]; then
+    git -C "$DOTFILES_DIR" submodule update --init --checkout work || echo "⚠ Couldn't pull the work dotfiles, skipping"
+  fi
+fi
+if [ -f "$DOTFILES_DIR/work/zprofile" ]; then
+  link_file "$DOTFILES_DIR/work/zprofile" "$HOME/.zprofile.local"
+  link_file "$DOTFILES_DIR/work/mise.toml" "$HOME/.config/mise/conf.d/multiverse.toml"
+fi
 
 # ~/.config tools
 [ -f "$DOTFILES_DIR/config/ghostty/config" ] && link_file "$DOTFILES_DIR/config/ghostty/config" "$HOME/.config/ghostty/config"
