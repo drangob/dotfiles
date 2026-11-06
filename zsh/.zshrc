@@ -72,11 +72,4 @@ fi
 
 export PATH=$HOME/.local/bin:$PATH
 
-# postgresql@15 is the native dev database (brew services, :5432). Versioned formulae are keg-only,
-# so without this psql and pg_dump aren't on PATH.
-if command -v brew >/dev/null 2>&1; then
-  pg_bin="$(brew --prefix postgresql@15 2>/dev/null)/bin"
-  [[ -d "$pg_bin" ]] && export PATH="$pg_bin:$PATH"
-fi
-
 export PATH=$HOME/.opencode/bin:$PATH
