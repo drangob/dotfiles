@@ -1,0 +1,12 @@
+#!/bin/zsh
+# Clears quarantine attributes and ad-hoc signs an app so macOS will open it.
+set -e
+
+if [ $# -eq 0 ]; then
+  echo "Usage: sign-app <path_to_app>" >&2
+  exit 1
+fi
+
+xattr -cr "$1"
+codesign --force --sign - "$1"
+echo "App signed successfully: $1"
