@@ -98,6 +98,11 @@ fi
 [ -f "$DOTFILES_DIR/config/gh/config.yml" ] && link_file "$DOTFILES_DIR/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 [ -f "$DOTFILES_DIR/config/btop/btop.conf" ] && link_file "$DOTFILES_DIR/config/btop/btop.conf" "$HOME/.config/btop/btop.conf"
 
+# sudo askpass dialog (macOS only, used by the sudo wrapper in .zshenv)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  link_file "$DOTFILES_DIR/bin/claude-sudo-askpass.sh" "$HOME/.local/bin/claude-sudo-askpass.sh"
+fi
+
 # Bootstrap Codex CLI if not present
 if ! command -v codex >/dev/null 2>&1 && [ ! -f "$HOME/.local/bin/codex" ]; then
   echo "🤖 Installing Codex CLI..."
