@@ -139,6 +139,14 @@ unset ZSH_AUTOSUGGEST_USE_ASYNC
 alias vim="nvim"
 alias vi="nvim"
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
+fi
+
+if [[ "$TERM_PROGRAM" == "vscode" ]]; then
+  export GH_EDITOR="code --wait"
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
@@ -202,7 +210,6 @@ fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
-export PATH="$HOME/.local/bin:$PATH"
 if command -v brew >/dev/null 2>&1; then
   pg_bin="$(brew --prefix postgresql@15 2>/dev/null)/bin"
   [[ -d "$pg_bin" ]] && export PATH="$pg_bin:$PATH"
@@ -217,7 +224,3 @@ if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)
 
 # opencode
 export PATH=$HOME/.opencode/bin:$PATH
-
-
-# Added by Antigravity CLI installer
-export PATH="$HOME/.local/bin:$PATH"
