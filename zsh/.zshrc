@@ -46,10 +46,6 @@ unset ZSH_AUTOSUGGEST_USE_ASYNC
 alias vim="nvim"
 alias vi="nvim"
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
-fi
-
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
   export GH_EDITOR="code --wait"
 fi
