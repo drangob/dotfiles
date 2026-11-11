@@ -3,10 +3,25 @@ set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Ensure Homebrew is in PATH if installed in standard locations
+if ! command -v brew >/dev/null 2>&1; then
+  if [ -x "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
+fi
+
 # Ensure Zsh is installed
 if ! command -v zsh >/dev/null 2>&1; then
   echo "❌ Error: zsh is not installed. Please install zsh on this machine first."
   exit 1
+fi
+
+# Install dependencies from Brewfile
+if command -v brew >/dev/null 2>&1 && [ -f "$DOTFILES_DIR/Brewfile" ]; then
+  echo "🍺 Installing Homebrew dependencies from Brewfile..."
+  brew bundle --file="$DOTFILES_DIR/Brewfile" --no-upgrade
 fi
 
 # Bootstrap Oh-My-Zsh if not present
@@ -42,12 +57,18 @@ link_file() {
   local src="$1"
   local dst="$2"
 
+  if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+    echo "✔ Already linked $dst -> $src"
+    return 0
+  fi
+
   if [ -e "$dst" ] && [ ! -L "$dst" ]; then
-    echo "Backing up existing $dst -> $dst.backup"
-    mv "$dst" "$dst.backup"
+    local backup="${dst}.backup.$(date +%Y%m%d%H%M%S)"
+    echo "Backing up existing $dst -> $backup"
+    mv "$dst" "$backup"
   fi
   mkdir -p "$(dirname "$dst")"
-  ln -sf "$src" "$dst"
+  ln -sfn "$src" "$dst"
   echo "✔ Linked $dst -> $src"
 }
 
@@ -66,27 +87,27 @@ link_file "$DOTFILES_DIR/tmux/.tmux.conf" "$HOME/.tmux.conf"
 link_file "$DOTFILES_DIR/ssh/config" "$HOME/.ssh/config"
 
 # Neovim (Single folder link)
-if [ -d "$DOTFILES_DIR/config/nvim" ]; then
-  if [ -e "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ]; then
-    echo "Backing up existing ~/.config/nvim -> ~/.config/nvim.backup"
-    mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup"
-  fi
-  mkdir -p "$HOME/.config"
-  ln -sf "$DOTFILES_DIR/config/nvim" "$HOME/.config/nvim"
-  echo "✔ Linked $HOME/.config/nvim -> $DOTFILES_DIR/config/nvim"
-fi
+[ -d "$DOTFILES_DIR/config/nvim" ] && link_file "$DOTFILES_DIR/config/nvim" "$HOME/.config/nvim"
 
 # Tool versioning
 link_file "$DOTFILES_DIR/config/mise/config.toml" "$HOME/.config/mise/config.toml"
-command -v mise >/dev/null 2>&1 || echo "⚠ mise is not installed: brew install mise"
 
 # Work dotfiles (private submodule, opt-in per machine)
-if [ ! -f "$DOTFILES_DIR/work/zprofile" ]; then
-  read -rp "Pull the private work dotfiles (needs access to drangob/dotfiles-work)? [y/N] " pull_work
-  if [[ "$pull_work" =~ ^[Yy] ]]; then
-    git -C "$DOTFILES_DIR" submodule update --init --checkout work || echo "⚠ Couldn't pull the work dotfiles, skipping"
+work_opt_in="$(git -C "$DOTFILES_DIR" config --local dotfiles.work-submodule 2>/dev/null || true)"
+if [ ! -f "$DOTFILES_DIR/work/zprofile" ] && [ -z "$work_opt_in" ]; then
+  if [ -t 0 ]; then
+    read -rp "Pull the private work dotfiles (needs access to drangob/dotfiles-work)? [y/N] " pull_work
+    if [[ "$pull_work" =~ ^[Yy] ]]; then
+      git -C "$DOTFILES_DIR" config --local dotfiles.work-submodule true
+      git -C "$DOTFILES_DIR" submodule update --init --checkout work || echo "⚠ Couldn't pull the work dotfiles, skipping"
+    else
+      git -C "$DOTFILES_DIR" config --local dotfiles.work-submodule false
+    fi
   fi
+elif [ "$work_opt_in" = "true" ] && [ ! -f "$DOTFILES_DIR/work/zprofile" ]; then
+  git -C "$DOTFILES_DIR" submodule update --init --checkout work || echo "⚠ Couldn't pull the work dotfiles, skipping"
 fi
+
 if [ -f "$DOTFILES_DIR/work/zprofile" ]; then
   link_file "$DOTFILES_DIR/work/zprofile" "$HOME/.zprofile.local"
   link_file "$DOTFILES_DIR/work/mise.toml" "$HOME/.config/mise/conf.d/multiverse.toml"
@@ -111,7 +132,7 @@ if ! command -v codex >/dev/null 2>&1 && [ ! -f "$HOME/.local/bin/codex" ]; then
 fi
 
 # Setup ~/.gitconfig.local interactively if missing
-if [ ! -f "$HOME/.gitconfig.local" ]; then
+if [ ! -f "$HOME/.gitconfig.local" ] && [ -t 0 ]; then
   echo ""
   echo "--- Local Git Identity Setup (~/.gitconfig.local) ---"
   read -rp "Enter Git Name: " git_name

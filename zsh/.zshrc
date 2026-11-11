@@ -73,3 +73,25 @@ fi
 export PATH=$HOME/.local/bin:$PATH
 
 export PATH=$HOME/.opencode/bin:$PATH
+
+# Container alias
+if command -v podman >/dev/null 2>&1; then
+  alias docker="podman"
+fi
+
+# Modern CLI tools
+if command -v bat >/dev/null 2>&1; then
+  alias cat="bat"
+elif command -v batcat >/dev/null 2>&1; then
+  alias cat="batcat"
+fi
+
+if command -v eza >/dev/null 2>&1; then
+  alias ls="eza --icons"
+  alias ll="eza -lha --icons --git"
+  alias tree="eza --tree --icons"
+fi
+
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
